@@ -116,8 +116,7 @@ function WishlistPage() {
 
         {tab === "items" ? (
           <>
-            <div className="mt-4 flex items-center justify-end gap-2">
-              <span className="text-sm text-muted-foreground">Сортировка:</span>
+            <div className="mt-4 flex items-start">
               <Select
                 value={sort}
                 onValueChange={(value) =>
@@ -141,7 +140,7 @@ function WishlistPage() {
             </div>
 
             {sorted.length ? (
-              <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {sorted.map((item) => (
                   <ProductCard
                     key={item.id}

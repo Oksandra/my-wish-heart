@@ -6,11 +6,16 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Menu, Search, Heart, ShoppingCart, Package, User, ChevronDown } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { cn } from "../lib/utils";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 
 function NotFoundComponent() {
   return (
@@ -119,8 +124,147 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SiteHeader />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
+  );
+}
+
+const navLinks = [
+  { label: "Лента", href: "/" },
+  { label: "Женщинам", href: "/" },
+  { label: "Мужчинам", href: "/" },
+  { label: "Детям", href: "/" },
+  { label: "Дом", href: "/" },
+  { label: "Косметика", href: "/" },
+  { label: "Продукты", href: "/" },
+  { label: "Аксессуары", href: "/" },
+  { label: "Выгодно", href: "/" },
+  { label: "Бренды", href: "/" },
+  { label: "Товар дня", href: "/" },
+];
+
+function SiteHeader() {
+  const { location } = useRouterState();
+  const isWishlist = location.pathname === "/wishlist";
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
+      <div className="mx-auto w-full max-w-[1344px] px-4">
+        <div className="flex h-16 items-center gap-3 md:gap-6">
+          <Link to="/" className="flex shrink-0 items-center gap-1 text-2xl font-bold text-brand">
+            <span className="rounded-lg bg-brand px-2 py-1 text-brand-foreground">63</span>
+            <span className="hidden sm:inline">pokupki</span>
+          </Link>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden shrink-0 items-center gap-2 md:inline-flex"
+          >
+            <Menu className="h-4 w-4" />
+            Категории
+          </Button>
+
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Поиск"
+              className="h-10 w-full pl-9 pr-10 md:max-w-md"
+            />
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-brand p-1.5 text-brand-foreground"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+          </div>
+
+          <nav className="flex shrink-0 items-center gap-1 md:gap-3">
+            <HeaderIcon label="Oksandra" icon={<User className="h-5 w-5" />} className="hidden lg:flex" />
+            <HeaderIcon label="Заказы" icon={<Package className="h-5 w-5" />} badge="5" />
+            <HeaderIcon
+              label="Избранное"
+              icon={<Heart className="h-5 w-5" />}
+              active={isWishlist}
+              href="/wishlist"
+            />
+            <HeaderIcon label="Корзина" icon={<ShoppingCart className="h-5 w-5" />} badge="6" />
+          </nav>
+        </div>
+
+        <div className="hidden items-center gap-1 overflow-x-auto border-t border-border py-2 lg:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              to={link.href}
+              className={cn(
+                "whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-colors hover:text-brand",
+                link.label === "Избранное" && isWishlist
+                  ? "text-brand"
+                  : "text-foreground",
+              )}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function HeaderIcon({
+  label,
+  icon,
+  badge,
+  active,
+  href,
+  className,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  badge?: string;
+  active?: boolean;
+  href?: string;
+  className?: string;
+}) {
+  const content = (
+    <div className={cn("relative flex flex-col items-center gap-0.5 px-2 py-1", className)}>
+      <div className="relative">
+        {icon}
+        {badge && (
+          <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-sale px-1 text-[10px] font-medium text-white">
+            {badge}
+          </span>
+        )}
+      </div>
+      <span
+        className={cn(
+          "text-xs transition-colors",
+          active ? "text-brand" : "text-muted-foreground",
+        )}
+      >
+        {label}
+      </span>
+    </div>
+  );
+
+  return href ? (
+    <Link
+      to={href}
+      className={cn("rounded-lg transition-colors hover:bg-accent", active && "bg-brand-soft")}
+    >
+      {content}
+    </Link>
+  ) : (
+    <button
+      type="button"
+      className={cn("rounded-lg transition-colors hover:bg-accent", active && "bg-brand-soft")}
+    >
+      {content}
+    </button>
   );
 }

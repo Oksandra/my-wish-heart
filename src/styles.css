@@ -64,6 +64,7 @@
   --color-brand-hover: var(--brand-hover);
   --color-brand-soft: var(--brand-soft);
   --color-sale: var(--sale);
+  --color-favorite: var(--favorite);
   --color-rating: var(--rating);
 }
 
@@ -75,6 +76,7 @@
   --brand-hover: oklch(0.57 0.17 253);
   --brand-soft: oklch(0.96 0.02 253);
   --sale: oklch(0.62 0.21 25);
+  --favorite: oklch(0.62 0.25 5);
   --rating: oklch(0.79 0.16 78);
   --shadow-card: 0 8px 24px -12px oklch(0.2 0.04 265 / 0.25);
   --background: oklch(1 0 0);

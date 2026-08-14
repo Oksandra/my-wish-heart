@@ -92,7 +92,7 @@ function WishlistPage() {
   }, [items, sort]);
 
   return (
-    <main className="min-h-screen bg-background py-8">
+    <main className="min-h-screen bg-background py-4 md:py-8">
       <div className="mx-auto w-full max-w-[1344px] px-4">
         <h1 className="hidden text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:block">
           Избранное
@@ -101,7 +101,7 @@ function WishlistPage() {
         <div
           role="tablist"
           aria-label="Разделы избранного"
-          className="mt-5 flex gap-6 border-b border-border"
+          className="mt-3 flex gap-6 border-b border-border md:mt-5"
         >
           <TabButton active={tab === "items"} onClick={() => setTab("items")}>
             <Heart className="h-4 w-4" />

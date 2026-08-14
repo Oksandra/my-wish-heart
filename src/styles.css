@@ -70,7 +70,14 @@
 
 :root {
   --radius: 0.625rem;
+  --brand: oklch(0.63 0.17 253);
+  --brand-foreground: oklch(0.99 0 0);
+  --brand-hover: oklch(0.57 0.17 253);
+  --brand-soft: oklch(0.96 0.02 253);
+  --sale: oklch(0.62 0.21 25);
+  --rating: oklch(0.79 0.16 78);
   --background: oklch(1 0 0);
+
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);

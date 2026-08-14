@@ -175,11 +175,24 @@ function SiteHeader() {
           </Button>
 
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <div className="absolute left-0 top-0 z-10 h-10">
+              <Select defaultValue="favorites">
+                <SelectTrigger
+                  className="h-full gap-1 border-0 bg-transparent pl-3 pr-2 text-sm font-medium text-foreground hover:text-brand focus:ring-0 focus:ring-offset-0"
+                  aria-label="Область поиска"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="favorites">Избранное</SelectItem>
+                  <SelectItem value="site">По сайту</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <Input
               type="search"
               placeholder="Поиск"
-              className="h-10 w-full pl-9 pr-10 md:max-w-md"
+              className="h-10 w-full pl-[120px] pr-10 md:max-w-md"
             />
             <button
               type="button"

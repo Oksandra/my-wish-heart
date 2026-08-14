@@ -13,6 +13,7 @@ type Props = {
 
 export function ProductCard({ item, onRemove }: Props) {
   const unavailable = item.status === "out_of_stock";
+  const [favorite, setFavorite] = useState(true);
 
   return (
     <article

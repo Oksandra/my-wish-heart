@@ -83,7 +83,7 @@ function WishlistPage() {
       case "in_stock":
         return list.sort(
           (a, b) =>
-            statusOrder[a.status] - statusOrder[b.status] ||
+            (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2) ||
             +new Date(b.addedAt) - +new Date(a.addedAt),
         );
       default:

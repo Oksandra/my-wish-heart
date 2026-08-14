@@ -94,7 +94,7 @@ function WishlistPage() {
   return (
     <main className="min-h-screen bg-background py-8">
       <div className="mx-auto w-full max-w-[1344px] px-4">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        <h1 className="hidden text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:block">
           Избранное
         </h1>
 

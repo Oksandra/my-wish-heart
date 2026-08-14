@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Heart, ShoppingCart, Star, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { WishlistItem } from "@/data/wishlist";
@@ -10,8 +11,9 @@ type Props = {
   onRemove?: (id: string) => void;
 };
 
-export function ProductCard({ item, onRemove }: Props) {
+export function ProductCard({ item }: Props) {
   const unavailable = item.status === "out_of_stock";
+  const [favorite, setFavorite] = useState(true);
 
   return (
     <article
@@ -41,11 +43,24 @@ export function ProductCard({ item, onRemove }: Props) {
 
         <button
           type="button"
-          aria-label="Удалить из избранного"
-          onClick={() => onRemove?.(item.id)}
-          className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-card/95 text-brand shadow-sm transition-colors hover:text-destructive"
+          aria-pressed={favorite}
+          aria-label={favorite ? "Удалить из избранного" : "Добавить в избранное"}
+          onClick={() => setFavorite((v) => !v)}
+          className={cn(
+            "absolute right-2.5 top-2.5 grid h-9 w-9 place-items-center rounded-full bg-card shadow-[0_2px_8px_rgba(0,0,0,0.12)] transition-all duration-200",
+            "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            favorite && "opacity-100",
+          )}
         >
-          <Heart className="h-4 w-4 fill-current" />
+          <Heart
+            className={cn(
+              "h-[18px] w-[18px] transition-colors",
+              favorite
+                ? "fill-favorite text-favorite"
+                : "fill-none text-foreground/70 hover:text-favorite",
+            )}
+            strokeWidth={2}
+          />
         </button>
 
         {unavailable && (

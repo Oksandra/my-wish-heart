@@ -1,11 +1,33 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Heart, Store } from "lucide-react";
+import { Heart, Store, ArrowUpDown } from "lucide-react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/wishlist/ProductCard";
 import { wishlistItems as initialItems } from "@/data/wishlist";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const sortValues = [
+  "newest",
+  "oldest",
+  "price_asc",
+  "price_desc",
+  "in_stock",
+] as const;
+
+const wishlistSearchSchema = z.object({
+  sort: fallback(z.enum(sortValues), "newest").default("newest"),
+});
 
 export const Route = createFileRoute("/wishlist")({
+  validateSearch: zodValidator(wishlistSearchSchema),
   head: () => ({
     meta: [
       { title: "Избранное — сохранённые товары и поставщики" },
@@ -27,14 +49,47 @@ export const Route = createFileRoute("/wishlist")({
 
 type Tab = "items" | "suppliers";
 
+const sortLabels: Record<(typeof sortValues)[number], string> = {
+  newest: "Новые",
+  oldest: "Старые",
+  price_asc: "По возрастанию цены",
+  price_desc: "По убыванию цены",
+  in_stock: "Сначала в наличии",
+};
+
+const statusOrder: Record<string, number> = {
+  available: 0,
+  size_unavailable: 1,
+  out_of_stock: 2,
+};
+
 function WishlistPage() {
   const [tab, setTab] = useState<Tab>("items");
   const [items, setItems] = useState(initialItems);
+  const { sort } = useSearch({ from: "/wishlist" });
+  const navigate = useNavigate({ from: "/wishlist" });
 
-  const sorted = useMemo(
-    () => [...items].sort((a, b) => +new Date(b.addedAt) - +new Date(a.addedAt)),
-    [items],
-  );
+  const sorted = useMemo(() => {
+    const list = [...items];
+    switch (sort) {
+      case "newest":
+        return list.sort((a, b) => +new Date(b.addedAt) - +new Date(a.addedAt));
+      case "oldest":
+        return list.sort((a, b) => +new Date(a.addedAt) - +new Date(b.addedAt));
+      case "price_asc":
+        return list.sort((a, b) => a.price - b.price);
+      case "price_desc":
+        return list.sort((a, b) => b.price - a.price);
+      case "in_stock":
+        return list.sort(
+          (a, b) =>
+            (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2) ||
+            +new Date(b.addedAt) - +new Date(a.addedAt),
+        );
+      default:
+        return list;
+    }
+  }, [items, sort]);
 
   return (
     <main className="min-h-screen bg-background py-8">
@@ -60,23 +115,49 @@ function WishlistPage() {
         </div>
 
         {tab === "items" ? (
-          sorted.length ? (
-            <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {sorted.map((item) => (
-                <ProductCard
-                  key={item.id}
-                  item={item}
-                  onRemove={(id) => setItems((prev) => prev.filter((i) => i.id !== id))}
-                />
-              ))}
+          <>
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <span className="text-sm text-muted-foreground">Сортировка:</span>
+              <Select
+                value={sort}
+                onValueChange={(value) =>
+                  navigate({
+                    search: (prev) => ({ ...prev, sort: value as (typeof sortValues)[number] }),
+                  })
+                }
+              >
+                <SelectTrigger className="w-[230px]" aria-label="Сортировка товаров">
+                  <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {sortValues.map((value) => (
+                    <SelectItem key={value} value={value}>
+                      {sortLabels[value]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          ) : (
-            <EmptyState
-              icon={<Heart className="h-7 w-7" />}
-              title="В избранном пока пусто"
-              text="Нажимайте на сердечко у товара, чтобы вернуться к нему позже."
-            />
-          )
+
+            {sorted.length ? (
+              <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {sorted.map((item) => (
+                  <ProductCard
+                    key={item.id}
+                    item={item}
+                    onRemove={(id) => setItems((prev) => prev.filter((i) => i.id !== id))}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                icon={<Heart className="h-7 w-7" />}
+                title="В избранном пока пусто"
+                text="Нажимайте на сердечко у товара, чтобы вернуться к нему позже."
+              />
+            )}
+          </>
         ) : (
           <EmptyState
             icon={<Store className="h-7 w-7" />}

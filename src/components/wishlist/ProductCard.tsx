@@ -45,10 +45,7 @@ export function ProductCard({ item, onRemove }: Props) {
           type="button"
           aria-pressed={favorite}
           aria-label={favorite ? "Удалить из избранного" : "Добавить в избранное"}
-          onClick={() => {
-            setFavorite((v) => !v);
-            if (favorite) onRemove?.(item.id);
-          }}
+          onClick={() => setFavorite((v) => !v)}
           className={cn(
             "absolute right-2.5 top-2.5 grid h-9 w-9 place-items-center rounded-full bg-card shadow-[0_2px_8px_rgba(0,0,0,0.12)] transition-all duration-200",
             "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
